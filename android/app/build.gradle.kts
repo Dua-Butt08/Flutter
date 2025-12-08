@@ -6,7 +6,7 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
-    id("com.google.gms.google-services") version "4.4.4" apply false
+
 
 }
 
@@ -19,7 +19,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.hello_world"
+    namespace = "flutter.app08"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -33,7 +33,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.hello_world"
+        applicationId = "flutter.app08"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -52,8 +52,8 @@ android {
 buildTypes {
     getByName("release") {
         signingConfig = signingConfigs.getByName("release")
-        isMinifyEnabled = true          // must be true if shrinking resources
-        isShrinkResources = true        // enable only if you want resource shrinking
+        isMinifyEnabled = false
+        isShrinkResources = false
     }
 }
 

@@ -1,0 +1,21 @@
+name: Build APK and Docker Image
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - run: flutter pub get
+      - run: flutter build apk --release
+
+      # Build Docker image with the APK inside
+      - name: Build Docker image
+        run: docker build -t myapk:latest .
