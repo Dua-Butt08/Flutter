@@ -7,15 +7,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: subosito/flutter-action@v2
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
           channel: stable
 
-      - run: flutter pub get
-      - run: flutter build apk --release
+      - name: Get dependencies
+        run: flutter pub get
 
-      # Build Docker image with the APK inside
+      - name: Build APK (debug)
+        run: flutter build apk --debug
+
       - name: Build Docker image
         run: docker build -t myapk:latest .

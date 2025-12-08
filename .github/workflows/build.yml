@@ -17,38 +17,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Setup Java (required for Android build)
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      # 3️⃣ Install Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.35.7'
           channel: stable
 
-      # 4️⃣ Flutter doctor (optional, helps debugging)
       - name: Flutter doctor
         run: flutter doctor -v
 
-      # 5️⃣ Get dependencies
       - name: Get Flutter dependencies
         run: flutter pub get
 
-      # 6️⃣ Build Android APK (release)
-      - name: Build APK
-        run: flutter build apk --release
+      - name: Build APK (debug)
+        run: flutter build apk --debug
 
-      # 7️⃣ Upload APK as artifact
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
