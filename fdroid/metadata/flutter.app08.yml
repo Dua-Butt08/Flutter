@@ -1,0 +1,32 @@
+Categories:
+  - Development
+  - Internet
+
+License: Apache-2.0
+
+SourceCode: https://github.com/Dua-Butt08/Flutter
+IssueTracker: https://github.com/Dua-Butt08/Flutter/issues
+
+Changelog: |
+  Initial release - Simple Hello World App built with Flutter.
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+
+Summary: Simple Hello World Flutter App
+Description: |
+  This is a basic open-source Flutter hello world project with no additional features.
+  Created for testing and F-Droid publishing purpose.
+
+RepoType: git
+Repo: https://github.com/Dua-Butt08/Flutter.git
+
+Builds:
+  - versionName: 1.0.0
+    versionCode: 1
+    commit: HEAD
+    sudo:
+      - apt-get update
+      - apt-get install -y openjdk-17-jdk
+    gradle:
+      - assembleRelease
