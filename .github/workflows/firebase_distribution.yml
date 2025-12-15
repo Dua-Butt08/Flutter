@@ -51,8 +51,8 @@ jobs:
           npm install -g firebase-tools
           export GOOGLE_APPLICATION_CREDENTIALS=key.json
           firebase appdistribution:distribute build/app/outputs/flutter-apk/app-debug.apk \
-            --app 1:50837359806:android:1f365aefb6603bf49622ef \
-            --groups testers \
+            --app 1:877245461230:android:58286b23cdde374c0db9ff \
+            --groups DemoTest \
             --release-notes "Release ${{ steps.version.outputs.VERSION }}"
 
       - name: Update version in pubspec.yaml and commit
