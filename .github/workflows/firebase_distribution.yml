@@ -1,0 +1,65 @@
+name: Build & Distribute to Firebase
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get current version and increment
+        id: version
+        run: |
+          current=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          build=$(echo $current | cut -d'+' -f1 | cut -d'.' -f3)
+          new_build=$((build + 1))
+          echo "VERSION=1.0.$new_build" >> $GITHUB_OUTPUT
+          echo "BUILD=$new_build" >> $GITHUB_OUTPUT
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.7'
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --debug --build-name="${{ steps.version.outputs.VERSION }}" --build-number="${{ steps.version.outputs.BUILD }}"
+
+      - name: Decode Service Account
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode > key.json
+
+      - name: Distribute to Firebase
+        run: |
+          npm install -g firebase-tools
+          export GOOGLE_APPLICATION_CREDENTIALS=key.json
+          firebase appdistribution:distribute build/app/outputs/flutter-apk/app-debug.apk \
+            --app 1:50837359806:android:1f365aefb6603bf49622ef \
+            --groups testers \
+            --release-notes "Release ${{ steps.version.outputs.VERSION }}"
+
+      - name: Update version in pubspec.yaml and commit
+        run: |
+          sed -i "s/^version:.*/version: ${{ steps.version.outputs.VERSION }}+${{ steps.version.outputs.BUILD }}/" pubspec.yaml
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pubspec.yaml
+          git commit -m "Bump version to ${{ steps.version.outputs.VERSION }} [skip ci]"
+          git push
